@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources><item name="imvLogo" type="id"/>
+    <item name="btnLogin" type="id"/>
+    <item name="btnStart" type="id"/>
+    <item name="etPlayerNameSearch" type="id"/>
+    <item name="btnSearch" type="id"/>
+    <item name="tvTeamNameLabel" type="id"/>
+    <item name="spTeamName" type="id"/>
+    <item name="btnSubmit" type="id"/>
+    <item name="tvPlayerNameLabel" type="id"/>
+    <item name="imvPlayer" type="id"/>
+    <item name="tvPlayerFullName" type="id"/>
+    <item name="lvPlayerList" type="id"/>
+   </resources>

@@ -8,12 +8,13 @@ import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-//import com.parse.R;
-import com.fantasysportsgroupproject.app.Model.Player;
+import com.fantasysportsgroupproject.app.Fragment.Player;
 import com.fantasysportsgroupproject.app.R;
 import com.squareup.picasso.Picasso;
 
-import java.util.ArrayList;
+import java.util.List;
+
+//import com.parse.R;
 
 /**
  * Created by Anu on 7/21/14.
@@ -25,7 +26,7 @@ public class PlayerSearchListArrayAdapter extends ArrayAdapter<Player>{
     private TextView tvPlayerFullName;
     private TextView tvPlayerPosition;
 
-     public PlayerSearchListArrayAdapter(Context context,  ArrayList<Player> playerList) {
+     public PlayerSearchListArrayAdapter(Context context,  List<Player> playerList) {
          super(context, 0 , playerList);
      }
 

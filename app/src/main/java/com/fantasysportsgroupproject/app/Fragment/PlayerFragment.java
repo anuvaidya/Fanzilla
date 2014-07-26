@@ -40,14 +40,12 @@ public class PlayerFragment extends Fragment{
 
     public static final String TAG = "PLAYER.CLASS";
 
-    private Player newPlayer;
-
-
     private View view;
     private EditText etPlayerNameSearch;
     private Button btnSearch;
     private ListView lvPlayerList;
     private String givenFirstName;
+    private Player newPlayer;
     private ArrayList<Player> arrayOfPlayers;
     private PlayerSearchListArrayAdapter aPlayerListAdapter; // to show the list
 
@@ -71,10 +69,9 @@ public class PlayerFragment extends Fragment{
         view = inflater.inflate(R.layout.fragment_player, container, false);
         setup();
         setupListener();
+        //aPlayerListAdapter.clear();
 
-        aPlayerListAdapter= new PlayerSearchListArrayAdapter(getActivity(),arrayOfPlayers);
-        lvPlayerList.setAdapter(aPlayerListAdapter);
-
+//        aPlayerListAdapter.notifyDataSetChanged();
         return view;
     }
 
@@ -84,16 +81,12 @@ public class PlayerFragment extends Fragment{
         etPlayerNameSearch = (EditText) view.findViewById(R.id.etPlayerNameSearch);
         givenFirstName = etPlayerNameSearch.getText().toString();
         btnSearch = (Button) view.findViewById(R.id.btnSearch);
-        lvPlayerList = (ListView) view.findViewById(R.id.lvPlayerList);
-        arrayOfPlayers = new ArrayList<Player>();
-
-
+       // lvPlayerList = (ListView) view.findViewById(R.id.lvPlayerList);
+       // arrayOfPlayers = MySingleton.getInstance().arrayOfPlayers;
+       // aPlayerListAdapter= new PlayerSearchListArrayAdapter(getActivity(),arrayOfPlayers);
+       // lvPlayerList.setAdapter(aPlayerListAdapter);
 
     }
-
-
-
-
 
     private void setupListener()
     {
@@ -137,16 +130,26 @@ public class PlayerFragment extends Fragment{
         public void onClick(View v) {
 
             newPlayer = MySingleton.getInstance().newPlayer;
-            arrayOfPlayers = searchPlayer(givenFirstName);
+            arrayOfPlayers = MySingleton.getInstance().arrayOfPlayers;
+
+         //   arrayOfPlayers =  searchPlayer(givenFirstName);
+
+            /* FIND OUT WHY? the array of players though it is declared as a global instance,
+            it still doesn't show outside the anonymous class-The following code does not work ----
+            TODO
+            searchPlayer(givenFirstName);
+            Log.d(TAG,"Printing the array list from search button");
             Log.d(TAG,"print the array list size  : " + arrayOfPlayers.size());
             Log.d(TAG,"PRINT THE FINAL LIST OF PLAYERS ");
             for (Player p:arrayOfPlayers) {
-                Log.d(TAG,"print the array list of players: " + p.toString());
-            }
+                Log.d(TAG,"print the array list of players from search button: " + p.getPlayerID());
+            }*/
+
+
         }
     };
 
-    public ArrayList<Player> searchPlayer(String playerFirstName)
+    public void searchPlayer(String playerFirstName)
     {
 
         ParseQuery<ParseObject> query_players = ParseQuery.getQuery("NFLPlayers");
@@ -177,11 +180,13 @@ public class PlayerFragment extends Fragment{
                         // create a single player
                         Log.d("TAG", "FirstName =  " + playerList.get(i).getString("FirstName"));
                         String shortName = playerList.get(i).getString("ShortName");
+                        String firstName = playerList.get(i).getString("FirstName");
                         // Toast.makeText(g,"shortName = ",Toast.LENGTH_SHORT).show();
                         Log.d("Player", "short name: " +shortName);
                         //newPlayer = new Player();
                         // if (newPlayer != null) {
                         newPlayer.setPlayerShortName(shortName);
+                        newPlayer.setPlayerFirstName(firstName);
                         playerID = playerList.get(i).getInt("PlayerID");
                         newPlayer.setPlayerID(playerID);
                         newPlayer.setPhotoUrl(playerList.get(i).getString("PhotoUrl"));
@@ -190,10 +195,17 @@ public class PlayerFragment extends Fragment{
                         if (newPlayer != null) {
                             Log.d("Player", "adding the new player to arraylist ");
                             arrayOfPlayers.add(newPlayer);
-                            Log.d("Player", "the new player is " + arrayOfPlayers.toString());
+
+                           Log.d("Player", "the new player's first name  in the arrayList " + arrayOfPlayers.get(i).getPlayerFirstName());
                         }
-                            // add the player to the array list of players */
-                        Log.d("TAG", "Short Name of the player  : " + newPlayer.getPlayerShortName() + " with id : " + newPlayer.getPlayerID() + "\n") ;
+
+                        aPlayerListAdapter= new PlayerSearchListArrayAdapter(getActivity(),arrayOfPlayers);
+                        lvPlayerList = (ListView) view.findViewById(R.id.lvPlayerList);
+                        lvPlayerList.setAdapter(aPlayerListAdapter);
+                        aPlayerListAdapter.notifyDataSetChanged();
+
+                        // add the player to the array list of players */
+                       // Log.d("TAG", "Short Name of the player  : " + newPlayer.getPlayerShortName() + " with id : " + newPlayer.getPlayerID() + "\n") ;
                         //  Log.d("TAG", "the new added player to the list" + playerArrayList.get(i).toString());
                     }
                 }
@@ -212,7 +224,7 @@ public class PlayerFragment extends Fragment{
         }); // end of inner class
 
         // Log.d(TAG,"Printing playerArrayList size : "+playerArrayList.size());
-        return arrayOfPlayers;
+      //  return arrayOfPlayers;
         // return newPlayer;
     }
 

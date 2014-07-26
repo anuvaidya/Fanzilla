@@ -19,6 +19,7 @@ public class Player {
     private String playerShortName; //B.Jones
 
     private String fantasyPosition; // QB etc
+
     private String playerFirstName;
     private String playerLastName;
     private String photoUrl;
@@ -48,9 +49,9 @@ public class Player {
         return photoUrl;
     }
 
-    public int setPlayerID(int playerID){
+    public void setPlayerID(int playerID){
         this.playerID = playerID;
-        return playerID;
+
     }
 
     public void setPhotoUrl(String photoUrl) {
@@ -60,6 +61,7 @@ public class Player {
     public void setPlayerShortName(String playerShortName) {
         this.playerShortName = playerShortName;
     }
+
 
     public void setFantasyPosition(String fantasyPosition) {
         this.fantasyPosition = fantasyPosition;

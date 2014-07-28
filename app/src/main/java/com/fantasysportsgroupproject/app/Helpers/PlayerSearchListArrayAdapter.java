@@ -8,7 +8,7 @@ import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.fantasysportsgroupproject.app.Fragment.Player;
+import com.fantasysportsgroupproject.app.Model.Player;
 import com.fantasysportsgroupproject.app.R;
 import com.squareup.picasso.Picasso;
 

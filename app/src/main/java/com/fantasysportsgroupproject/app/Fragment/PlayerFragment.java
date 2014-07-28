@@ -12,6 +12,7 @@ import android.widget.EditText;
 import android.widget.ListView;
 
 import com.fantasysportsgroupproject.app.Helpers.PlayerSearchListArrayAdapter;
+import com.fantasysportsgroupproject.app.Model.Player;
 import com.fantasysportsgroupproject.app.R;
 import com.parse.FindCallback;
 import com.parse.ParseObject;

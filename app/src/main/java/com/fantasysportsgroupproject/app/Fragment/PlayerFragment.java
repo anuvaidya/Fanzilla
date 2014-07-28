@@ -23,6 +23,8 @@ import com.parse.ParseQuery;
 import java.util.ArrayList;
 import java.util.List;
 
+import static android.util.Log.d;
+
 
 /**
  * Created by Anu on 7/17/14.
@@ -69,6 +71,13 @@ public class PlayerFragment extends Fragment{
         view = inflater.inflate(R.layout.fragment_player, container, false);
         setup();
         setupListener();
+
+        /* since we are creating the array within the inner class, this gives null pointer
+        exception. I'm going to see creating the adapter within the inner class helps?
+         */
+      /*  aPlayerListAdapter= new PlayerSearchListArrayAdapter(getActivity(),arrayOfPlayers);
+        lvPlayerList = (ListView) view.findViewById(R.id.lvPlayerList);
+        lvPlayerList.setAdapter(aPlayerListAdapter);*/
         //aPlayerListAdapter.clear();
 
 //        aPlayerListAdapter.notifyDataSetChanged();
@@ -81,9 +90,18 @@ public class PlayerFragment extends Fragment{
         etPlayerNameSearch = (EditText) view.findViewById(R.id.etPlayerNameSearch);
         givenFirstName = etPlayerNameSearch.getText().toString();
         btnSearch = (Button) view.findViewById(R.id.btnSearch);
+
+        /* TESTED UPDATES array of players within the done class, but not able to see
+        outside of done method for adapter
+
+        newPlayer = MySingleton.getInstance().newPlayer;
+        arrayOfPlayers = MySingleton.getInstance().arrayOfPlayers; */
+
+
+
        // lvPlayerList = (ListView) view.findViewById(R.id.lvPlayerList);
        // arrayOfPlayers = MySingleton.getInstance().arrayOfPlayers;
-       // aPlayerListAdapter= new PlayerSearchListArrayAdapter(getActivity(),arrayOfPlayers);
+      // aPlayerListAdapter= new PlayerSearchListArrayAdapter(getActivity(),arrayOfPlayers);
        // lvPlayerList.setAdapter(aPlayerListAdapter);
 
     }
@@ -123,16 +141,18 @@ public class PlayerFragment extends Fragment{
     };
 
 
-    // On click of search button, call the static fun with the given first name
-    //
     private View.OnClickListener btnSearchListener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
 
-            newPlayer = MySingleton.getInstance().newPlayer;
-            arrayOfPlayers = MySingleton.getInstance().arrayOfPlayers;
+            //TRYINg to see if this helps to see the array of players available outside of done?
+            // THis works tested.
 
-         //   arrayOfPlayers =  searchPlayer(givenFirstName);
+           // newPlayer = MySingleton.getInstance().newPlayer;
+           // arrayOfPlayers = MySingleton.getInstance().arrayOfPlayers;
+           // aPlayerListAdapter = MySingleton.getInstance().aPlayerListAdapter;
+
+            searchPlayer(givenFirstName);
 
             /* FIND OUT WHY? the array of players though it is declared as a global instance,
             it still doesn't show outside the anonymous class-The following code does not work ----
@@ -153,6 +173,13 @@ public class PlayerFragment extends Fragment{
     {
 
         ParseQuery<ParseObject> query_players = ParseQuery.getQuery("NFLPlayers");
+
+       // newPlayer = MySingleton.getInstance().newPlayer;
+       // arrayOfPlayers = MySingleton.getInstance().arrayOfPlayers;
+        // Making the adapter FINAL DID NOT WORK
+       // final PlayerSearchListArrayAdapter aPlayerListAdapter =
+       //         new PlayerSearchListArrayAdapter(getActivity(),arrayOfPlayers);
+
         try {
             // query_players.whereEqualTo("FirstName", playerFirstName); // change to where matches
             query_players.whereMatches("FirstName","Patrick");
@@ -167,65 +194,88 @@ public class PlayerFragment extends Fragment{
             public String shortName;
             public int playerID;
 
-            // create a new playerArrayList of Type Player and add it to list of players
             @Override
             public void done(List<ParseObject> playerList, com.parse.ParseException e) {
-                if (e == null) // changed from == null to !=null question: will this check for null pointer exception on list?
+               // aPlayerListAdapter= new PlayerSearchListArrayAdapter(getActivity(),arrayOfPlayers);
+                if (e == null)
                 {
-                    Log.d("TAG", "Retrieved: size =  " + playerList.size());
+                    d("TAG", "Retrieved: size =  " + playerList.size());
 
                     for(int i=0;i<playerList.size();i++)
                     {
+                        newPlayer = MySingleton.getInstance().newPlayer;
+                        arrayOfPlayers = MySingleton.getInstance().arrayOfPlayers;
+
                         // short name is abbreviated name; got it from Parse
                         // create a single player
-                        Log.d("TAG", "FirstName =  " + playerList.get(i).getString("FirstName"));
+                        d("TAG", "FirstName =  " + playerList.get(i).getString("FirstName"));
                         String shortName = playerList.get(i).getString("ShortName");
                         String firstName = playerList.get(i).getString("FirstName");
-                        // Toast.makeText(g,"shortName = ",Toast.LENGTH_SHORT).show();
-                        Log.d("Player", "short name: " +shortName);
-                        //newPlayer = new Player();
-                        // if (newPlayer != null) {
+                        String lastName = playerList.get(i).getString("LastName");
+                        playerID = playerList.get(i).getInt("PlayerID");
+
+                        Log.d("Player", "short name: " + shortName);
+
                         newPlayer.setPlayerShortName(shortName);
                         newPlayer.setPlayerFirstName(firstName);
-                        playerID = playerList.get(i).getInt("PlayerID");
+                        newPlayer.setPlayerLastName(lastName);
                         newPlayer.setPlayerID(playerID);
                         newPlayer.setPhotoUrl(playerList.get(i).getString("PhotoUrl"));
+
+                        Log.d("Player", "the photo url = : " + newPlayer.getPhotoUrl());
                         newPlayer.setFantasyPosition(playerList.get(i).getString("FantasyPosition"));
 
                         if (newPlayer != null) {
-                            Log.d("Player", "adding the new player to arraylist ");
+                            d("Player", "adding the new player to arraylist ");
                             arrayOfPlayers.add(newPlayer);
 
-                           Log.d("Player", "the new player's first name  in the arrayList " + arrayOfPlayers.get(i).getPlayerFirstName());
+                           Log.d("Player", "the new player's last name  in the arrayList " + arrayOfPlayers.get(i).getPlayerLastName());
+                           Log.d("Player", "the new player's photo url  in the arrayList " + arrayOfPlayers.get(i).getPhotoUrl());
+
+                        }
+                        //printing the playerlist:
+                        for(Player x:arrayOfPlayers) {
+                            Log.d(TAG,"printing the list of player's last name within the for: " + x.getPlayerLastName());
                         }
 
-                        aPlayerListAdapter= new PlayerSearchListArrayAdapter(getActivity(),arrayOfPlayers);
+
                         lvPlayerList = (ListView) view.findViewById(R.id.lvPlayerList);
+                        aPlayerListAdapter= new PlayerSearchListArrayAdapter(getActivity(),arrayOfPlayers);
                         lvPlayerList.setAdapter(aPlayerListAdapter);
                         aPlayerListAdapter.notifyDataSetChanged();
 
-                        // add the player to the array list of players */
-                       // Log.d("TAG", "Short Name of the player  : " + newPlayer.getPlayerShortName() + " with id : " + newPlayer.getPlayerID() + "\n") ;
-                        //  Log.d("TAG", "the new added player to the list" + playerArrayList.get(i).toString());
-                    }
+                    }// end of for
+
+                    /* THIS WORKS WITHIN THE INNER CLASS --- TESTED)
+                    Log.d("Player", "the array size " + arrayOfPlayers.size());
+                    Log.d("Player", "the player id from the arrayList " + arrayOfPlayers.get(8).getPlayerID());
+                    Log.d("Player"," the activity in the player fragment: " + getActivity());
+
+                    */
+
+                    // UNCOMMENT THIS LATER IF NECESSARY-----
+
+                    // Adapter has to be within the inner class done, otherwise it does not
+                    // get updated.
+
+                   /*lvPlayerList = (ListView) view.findViewById(R.id.lvPlayerList);
+                   lvPlayerList.setAdapter(aPlayerListAdapter);
+                   aPlayerListAdapter.notifyDataSetChanged(); */
+
                 }
 
                 else
                 {
-                    Log.d("score", "Error: " + e.getMessage());
+                    d("score", "Error: " + e.getMessage());
                     //playerArrayList = null;
 
                 }
-
-
             }// end of done
-
 
         }); // end of inner class
 
-        // Log.d(TAG,"Printing playerArrayList size : "+playerArrayList.size());
-      //  return arrayOfPlayers;
-        // return newPlayer;
+      // Log.d(TAG, "Printing playerArrayList after coming out of done : " + arrayOfPlayers.size());
+       Log.d("Player", " the activity in the player fragment: " + getActivity());
     }
 
 }

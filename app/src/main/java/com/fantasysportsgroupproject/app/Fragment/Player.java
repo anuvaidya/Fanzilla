@@ -80,5 +80,8 @@ public class Player {
     }
 
 
+    public void setPlayerLastName(String playerLastName) {
+        this.playerLastName = playerLastName;
+    }
 }
 

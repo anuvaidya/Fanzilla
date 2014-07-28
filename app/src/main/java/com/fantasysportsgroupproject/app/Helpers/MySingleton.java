@@ -12,6 +12,7 @@ public class MySingleton {
 
     public Player newPlayer;
     public ArrayList<Player> arrayOfPlayers;
+    public PlayerSearchListArrayAdapter aPlayerListAdapter;
 
     public static MySingleton getInstance()
     {
@@ -25,7 +26,8 @@ public class MySingleton {
             // create the instance
             instance = new MySingleton();
             instance.newPlayer = new Player();
-            instance.arrayOfPlayers = new ArrayList<Player>(0);
+            instance.arrayOfPlayers = new ArrayList<Player>();
+
         }
 
     }

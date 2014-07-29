@@ -1,8 +1,10 @@
 package com.fantasysportsgroupproject.app.Fragment;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,7 +12,9 @@ import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.Toast;
 
+import com.fantasysportsgroupproject.app.AnnaActivity;
 import com.fantasysportsgroupproject.app.Helpers.PlayerSearchListArrayAdapter;
 import com.fantasysportsgroupproject.app.Model.Player;
 import com.fantasysportsgroupproject.app.R;
@@ -20,8 +24,6 @@ import com.parse.ParseQuery;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import static android.util.Log.d;
 
 
 /**
@@ -39,6 +41,7 @@ import static android.util.Log.d;
 public class PlayerFragment extends Fragment{
 
     public static final String TAG = "PLAYER.CLASS";
+    private static final int REQUEST_CODE = 100;
 
     private View view;
     private EditText etPlayerNameSearch;
@@ -76,38 +79,70 @@ public class PlayerFragment extends Fragment{
         etPlayerNameSearch = (EditText) view.findViewById(R.id.etPlayerNameSearch);
         givenFirstName = etPlayerNameSearch.getText().toString();
         btnSearch = (Button) view.findViewById(R.id.btnSearch);
+        lvPlayerList = (ListView) view.findViewById(R.id.lvPlayerList);
     }
 
     private void setupListener()
     {
         btnSearch.setOnClickListener(btnSearchListener);
+        lvPlayerList.setOnItemClickListener(playerListListener);
 
+       /* lvPlayerList.setOnClickListener(new AdapterView.OnClickListener(){
+
+
+            @Override
+            public void onItemClick(View v) {
+
+            }
+        }); */
     }
+
 
     // on click of the list, show the detailed page with stats for the player
     // send id, position to Anna
     // what if I don't have any result in my list?=======TODO????
-    private AdapterView.OnItemClickListener playerListListener = new AdapterView.OnItemClickListener() {
+   // private View.OnClickListener btnSearchListener = new View.OnClickListener()
+   private  AdapterView.OnItemClickListener playerListListener = new AdapterView.OnItemClickListener()
+   {
         @Override
-       public void onItemClick(AdapterView<?> adapterView,View view, int position,long id) {
-            // create a bundle for args
-            // pass player id to Anna
-            // How to get the item at that position
-           // view.getId();
-          //  Toast.makeText(getActivity(),"On Click list - activate detailed player activity", Toast.LENGTH_SHORT).show();
-            // uncomment later =========   todo????
-         /*   Intent i = new Intent(DetailedPlayerListActivity.class,"Showing Stats");
-            i.putInt(newPlayer.getPlayerID());
-            i.putString(newPlayer.getFantasyPosition());
+       public void onItemClick(AdapterView<?> adapterView,View view, int position,long id)
+        {
 
-            //startActivityForResult(intent, DISPLAY_STATS_REQUEST_CODE);
-            // After passing the player id to Activity, DO I need result from Anna */
+            Toast.makeText(getActivity(), "call anna activity and pass playerId ", Toast.LENGTH_SHORT).show();
+            Log.d(TAG,"the activity within player fragment: " + getActivity() );
+
+            Player p =  arrayOfPlayers.get(position);
+
+            int playerID = p.getPlayerID();
+           // String fanPosition = p.getFantasyPosition();
+            if (p != null)
+            {
+                 Intent i = new Intent(getActivity(),AnnaActivity.class);
+                 i.putExtra("player_id ", playerID);
+              //   i.putExtra("fantasy_position",fanPosition);
+                 startActivityForResult(i, REQUEST_CODE);
+            }
+            else
+               Toast.makeText(getActivity(),"NO player to show: Click on a player", Toast.LENGTH_SHORT).show();
+        }
+    };
+
+        // add it to fav. screens activity based on the request code
+        @Override
+        public void onActivityResult(int requestCode, int resultCode, Intent data) {
+
+            // REQUEST_CODE is defined above
+          /*  if (resultCode == RESULT_OK && requestCode == REQUEST_CODE) {
+                // add this new tweet to the timeline
+                Toast.makeText(getActivity(),"create a new intent for fav screen: " , Toast.LENGTH_SHORT).show();
+
+            }*/
+         /*   if (data == null) return;
+            Toast.makeText(getActivity(),"create a new intent for fav screen: " , Toast.LENGTH_SHORT).show();
+        } */
 
 
         }
-
-    };
-
 
     private View.OnClickListener btnSearchListener = new View.OnClickListener() {
         @Override
@@ -142,7 +177,7 @@ public class PlayerFragment extends Fragment{
 
                 if (e == null)
                 {
-                    d("TAG", "Retrieved: size =  " + playerList.size());
+                    Log.d("TAG", "Retrieved: size =  " + playerList.size());
 
                     for(int i=0;i<playerList.size();i++)
                     {
@@ -168,7 +203,7 @@ public class PlayerFragment extends Fragment{
                 } //end of (e == null)
                 else
                 {
-                    d("score", "Error: " + e.getMessage());
+                    Log.d("score", "Error: " + e.getMessage());
                 }
             }// end of done
 
